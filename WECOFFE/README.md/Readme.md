@@ -71,15 +71,15 @@ Foram identificados os seguintes processos:
 - **Consulta e análise de vendas:** consolidação das informações para apoiar o fechamento mensal e a análise do desempenho da unidade.
 
 ## Fluxograma
-
+![alt text](image-1.png)
 
 ### Legenda
 
 | Elemento | Significado |
 |---|---|
-| Verde | Início / Fim |
-| Azul | Processo / Atividade |
-| Rosa | Decisão |
+| 🟢| Início / Fim |
+| ▭ | Processo / Atividade |
+| ♦️| Decisão |
 | Setas | Fluxo de execução |
 
 ---
@@ -89,7 +89,7 @@ Foram identificados os seguintes processos:
 ## 3.1Requisitos Funcionais
 
 | Requisito |
-||---|
+|---|
 | O sistema deve permitir cadastrar clientes. |
 | O sistema deve permitir cadastrar funcionários. |
 | O sistema deve permitir cadastrar totens. |
@@ -323,7 +323,7 @@ Foram classificados principalmente como:
 
 ## 7.1 DER da We Coffee
 
-![DER — We Coffee](Docs/DER_WeCoffee.png)
+![DER — We Coffee](modelagem/![alt text](image.png))
 
 ## 7.2 Principais relacionamentos
 
@@ -402,14 +402,14 @@ A Inteligência Artificial foi utilizada como ferramenta de apoio durante o dese
 
 | Item | Registro |
 |---|---|
-| **Ferramenta e etapa** | ChatGPT, utilizado na organização do README, análise dos requisitos, revisão do modelo conceitual, definição de cardinalidades e estruturação do dicionário de dados. |
+| **Ferramenta e etapa** | ChatGPT *GPT-5.6 Luna*, utilizado na organização do README, análise dos requisitos, revisão do modelo conceitual, definição de cardinalidades e estruturação do dicionário de dados. |
 | **Motivação** | Auxiliar na organização das informações levantadas e revisar a consistência entre processos, requisitos, regras, entidades e relacionamentos. |
-| **Prompts utilizados** | Exemplos: "Com base no levantamento realizado na We Coffee, identifique as entidades necessárias para o modelo conceitual."; "Revise o modelo considerando que um pedido pode ser dividido em dois pagamentos."; "Analise o controle de estoque e fornecedor e indique como representar isso no modelo conceitual."; "Faça um pente-fino no README verificando se os requisitos, regras, dicionário e DER estão coerentes." |
+| **Prompts utilizados** | Exemplos: "Com base no levantamento realizado na We Coffee, identifique as entidades necessárias para o modelo conceitual."; "Com base nesses dois veja se bate o que está sendo pedido, esse ultimo que te mandei foi um exemplo de um amigo meu e veja o que o dele está certo e nosso errado\nesse Prompt, utilizei o arquivo de esqueleto do professor, o nosso readme.md e outro readme.md de um amigo para ter um comparativo onde poderíamos melhor nosso trabalho.";"Revise o modelo considerando que um pedido pode ser dividido em dois pagamentos."; "Analise o controle de estoque e fornecedor e indique como representar isso no modelo conceitual."; "Faça um pente-fino no README verificando se os requisitos, regras, dicionário e DER estão coerentes." |
 | **Resposta recebida** | A IA forneceu sugestões de estrutura, entidades, relacionamentos, cardinalidades, requisitos, regras e organização do documento. |
 | **Fontes consultadas e verificadas** | As informações sobre os processos da organização foram comparadas com o levantamento realizado pelo grupo, incluindo entrevista e observação da unidade. |
-| **Trechos rejeitados ou corrigidos** | Sugestões que não correspondiam ao processo real foram ajustadas ou descartadas. Exemplos incluem a relação 1:1 de pagamento, substituída por 1:N, e a duplicidade de quantidade de estoque em PRODUTO e ESTOQUE. |
+| **Trechos rejeitados ou corrigidos** | Nem tudo que a IA sugeriu ficou no modelo final. O exemplo mais claro foi a cardinalidade entre PEDIDO e PAGAMENTO: a primeira sugestão veio como 1:1, o que simplesmente não bateria com o que vimos na loja — a divisão de conta é algo real e recorrente. Corrigimos para 1:N. Outro ponto ajustado foi a tentativa inicial de manter a quantidade em estoque tanto em PRODUTO quanto em ESTOQUE; percebemos que isso duplicaria a informação e resolvemos manter só em ESTOQUE. |
 | **Justificativa da escolha final** | As decisões finais foram tomadas pelo grupo com base nas informações obtidas na organização e na necessidade de manter coerência entre o modelo e os processos observados. |
-| **Reflexão crítica** | A IA auxiliou na organização e revisão, mas suas sugestões não foram consideradas automaticamente corretas. O grupo precisou validar as propostas e adaptá-las à realidade observada. |
+| **Reflexão crítica** | De modo geral, a IA ajudou a organizar as ideias e a apontar inconsistências que a gente não tinha notado, mas todas as decisões finais passaram pela validação do grupo com base no que foi observado e coletado na visita e na entrevista — a IA sugeriu, mas quem decidiu foi o grupo mesmo. |
 
 ---
 
@@ -418,5 +418,3 @@ A Inteligência Artificial foi utilizada como ferramenta de apoio durante o dese
 O modelo conceitual desenvolvido representa os principais processos observados na unidade da We Coffee, incluindo atendimento, pedidos, pagamentos, preparação, entrega, estoque, entradas de produtos e fornecedores.
 
 A modelagem foi estruturada para manter consistência entre os processos levantados, os requisitos, as regras de negócio, o dicionário de dados e o DER.
-
-Além de representar a operação atual, o modelo foi organizado de forma que possa ser ampliado em etapas futuras do projeto, mantendo espaço para novos produtos, fornecedores, pedidos e demais registros operacionais.
