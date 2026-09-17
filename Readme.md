@@ -1,5 +1,15 @@
 # We Coffee — Modelo Conceitual de Banco de Dados
 
+# Integrantes 
+
+| Nome | RGM |
+|----|----|
+| Guilherme Souza Lima | 46899502 |
+| João Victor Moidano do Valle | 46576461 |
+| Gabriel Amorim Sartori | 46832939 |
+| Guilherme Cau Guateli | 46736069 |
+| Matheus Fernandes Andrade | 46754539 |
+
 ## Entrega 1 — Modelo Conceitual (DER)
 
 **Organização analisada:** We Coffee — MOONLIGHT COFFEE CAFETERIA LTDA.  
