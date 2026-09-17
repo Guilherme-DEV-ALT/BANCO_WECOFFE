@@ -59,6 +59,7 @@ Foram obtidas evidências da existência e do acesso à organização, incluindo
 - endereço da unidade;
 - site oficial;
 - rede social da organização;
+- contato do gentente da unidade: Daniel Porrino (+55 11 95208-6022)
 - entrevista com a gerente;
 - registros fotográficos da unidade.
 - vídeos de como funciona o atendimenmto.
