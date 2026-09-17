@@ -10,16 +10,6 @@
 
 ---
 
-# Integrantes 
-
-| NOME | RGM |
-|----|----|
-| Guilherme Souza Lima | 46899502 |
-| Gabriel Amorim Sartori | 46832939 |
-| Guilherme Cau Guateli | 46736069 |
-| João Victor Moidano do Valle | 46576461 | 
-| Matheus Fernandes Andrade | 46754539 |
-
 # 1. Caracterização da Organização
 
 ## Nome e natureza da organização
@@ -57,7 +47,6 @@ O grupo teve acesso à unidade e realizou entrevista com a gerente, além de obs
 Foram obtidas evidências da existência e do acesso à organização, incluindo:
 
 - endereço da unidade;
-- contato do entrevistado: Daniel Porrino (+55 11 95208-6022)
 - site oficial;
 - rede social da organização;
 - entrevista com a gerente;
@@ -99,14 +88,14 @@ Foram identificados os seguintes processos:
 
 ## 3.1Requisitos Funcionais
 
-| Requisito | Entidades |
-|---|-----|
-| O sistema deve permitir cadastrar clientes. | Sendo utilizado CPF OU CNPJ (Para cadastro único) |
-| O sistema deve permitir cadastrar funcionários. | (É permitido, porêm não muito ultilizado ) |
-| O sistema deve permitir cadastrar totens. | Vinculado com a entidade: id_totem |
-| O sistema deve permitir cadastrar produtos. | vinculado com a entidade : id_produto |
-| O sistema deve permitir registrar pedidos. | vinculado com a entidade : id_pedido |
-| O sistema deve identificar o canal de realização do pedido: TOTEM, BALCÃO ou APLICATIVO. | Vinculado com a entidade : id_Totem |
+| Requisito |
+|---|
+| O sistema deve permitir cadastrar clientes. |
+| O sistema deve permitir cadastrar funcionários. |
+| O sistema deve permitir cadastrar totens. |
+| O sistema deve permitir cadastrar produtos. |
+| O sistema deve permitir registrar pedidos. |
+| O sistema deve identificar o canal de realização do pedido: TOTEM, BALCÃO ou APLICATIVO. |
 | O sistema deve permitir registrar os produtos e quantidades de cada pedido. |
 | O sistema deve registrar o preço praticado no momento da venda. |
 | O sistema deve permitir registrar um ou mais pagamentos para um pedido. |
@@ -215,7 +204,6 @@ Foram identificados os seguintes processos:
 | id_pedido | Pedido ao qual o item pertence | Obrigatório (FK) |
 | id_produto | Produto associado ao item | Obrigatório (FK) |
 | quantidade | Quantidade do produto vendida | Obrigatório; maior que zero |
-| cadastrar produto| Categoria/Preço/Número do pedido | Obrigatório; preencher requisitos | 
 | preco_unitario | Preço do produto no momento da venda | Obrigatório; preserva o histórico |
 
 ## 5.6 Entidade: PRODUTO
