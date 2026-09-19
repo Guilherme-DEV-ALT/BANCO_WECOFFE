@@ -99,9 +99,9 @@ Foram identificados os seguintes processos:
 
 ## 3.1Requisitos Funcionais
 
-| Requisito |
-|---|
-| O sistema deve permitir cadastrar clientes. |
+| Requisito | Entidade e associação |
+|---|---|
+| O sistema deve permitir cadastrar clientes. | 
 | O sistema deve permitir cadastrar funcionários. |
 | O sistema deve permitir cadastrar totens. |
 | O sistema deve permitir cadastrar produtos. |
@@ -214,7 +214,7 @@ Foram identificados os seguintes processos:
 | id_item | Identificador único do item | Obrigatório e único (PK) |
 | id_pedido | Pedido ao qual o item pertence | Obrigatório (FK) |
 | id_produto | Produto associado ao item | Obrigatório (FK) |
-| quantidade | Quantidade do produto vendida | Obrigatório; maior que zero |
+| id_quantidade | Quantidade do produto vendida | Obrigatório; maior que zero |
 | preco_unitario | Preço do produto no momento da venda | Obrigatório; preserva o histórico |
 
 ## 5.6 Entidade: PRODUTO
