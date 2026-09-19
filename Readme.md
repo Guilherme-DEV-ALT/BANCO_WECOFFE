@@ -135,10 +135,10 @@ Foram identificados os seguintes processos:
 
 ## 4.1 Regras Operacionais
 
-| Regras |
-|---|
-| Todo pedido deve possuir um identificador único. |
-| Todo pedido deve possuir pelo menos um item. |
+| Regras | Entidade e associação
+|---|---|
+| Todo pedido deve possuir um identificador único. | *CLIENTE* - Indentificado por CPF/CNPJ e associação a *PEDIDO*
+| Todo pedido deve possuir pelo menos um item. | 
 | A quantidade de um item de pedido deve ser maior que zero. |
 | Cada item de pedido deve estar associado a um produto cadastrado. |
 | O preço unitário registrado no item deve representar o valor praticado no momento da venda. |
