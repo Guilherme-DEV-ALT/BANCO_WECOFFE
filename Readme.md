@@ -101,22 +101,22 @@ Foram identificados os seguintes processos:
 
 | Requisito | Entidade e associação |
 |---|---|
-| O sistema deve permitir cadastrar clientes. | 
-| O sistema deve permitir cadastrar funcionários. |
-| O sistema deve permitir cadastrar totens. |
-| O sistema deve permitir cadastrar produtos. |
-| O sistema deve permitir registrar pedidos. |
-| O sistema deve identificar o canal de realização do pedido: TOTEM, BALCÃO ou APLICATIVO. |
-| O sistema deve permitir registrar os produtos e quantidades de cada pedido. |
-| O sistema deve registrar o preço praticado no momento da venda. |
-| O sistema deve permitir registrar um ou mais pagamentos para um pedido. |
-| O sistema deve permitir registrar pagamentos divididos entre diferentes formas de pagamento. |
-| O sistema deve permitir consultar a quantidade disponível de cada produto. |
-| O sistema deve permitir registrar entradas de estoque. |
-| O sistema deve permitir cadastrar fornecedores. |
-| O sistema deve registrar os produtos e quantidades recebidos em cada entrada de estoque. |
-| O sistema deve permitir consultar pedidos e pagamentos. |
-| O sistema deve permitir consolidar informações de vendas para apoiar o fechamento mensal. |
+| O sistema deve permitir cadastrar clientes. | CLIENTE — identificado por CPF/CNPJ e associado a PEDIDO. |
+| O sistema deve permitir cadastrar funcionários. | FUNCIONARIO — identificado por ID/CPF e associado à UNIDADE e aos pedidos. | 
+| O sistema deve permitir cadastrar totens. | TOTEM — identificado por ID e associado à UNIDADE e aos pedidos. |
+| O sistema deve permitir cadastrar produtos. | PRODUTO — identificado por ID e associado a ITEM_PEDIDO e ITEM_ENTRADA_ESTOQUE.|
+| O sistema deve permitir registrar pedidos. | PEDIDO — identificado por ID e associado a CLIENTE, ITEM_PEDIDO e PAGAMENTO. |
+| O sistema deve identificar o canal de realização do pedido: TOTEM, BALCÃO ou APLICATIVO. | PEDIDO — possui o atributo CANAL_PEDIDO, identificando a origem da venda. |
+| O sistema deve permitir registrar os produtos e quantidades de cada pedido. | ITEM_PEDIDO — associa PEDIDO e PRODUTO, registrando quantidade.|
+| O sistema deve registrar o preço praticado no momento da venda. | ITEM_PEDIDO — registra o PREÇO_UNITARIO no momento da venda.|
+| O sistema deve permitir registrar um ou mais pagamentos para um pedido. | PAGAMENTO — identificado por ID e associado a PEDIDO. |
+| O sistema deve permitir registrar pagamentos divididos entre diferentes formas de pagamento. | PAGAMENTO — registra valor e FORMA_PAGAMENTO, permitindo divisão. |
+| O sistema deve permitir consultar a quantidade disponível de cada produto. | ESTOQUE — associado a PRODUTO e registra a quantidade disponível. |
+| O sistema deve permitir registrar entradas de estoque. | ENTRADA_ESTOQUE — associada a FORNECEDOR e ITEM_ENTRADA_ESTOQUE. |
+| O sistema deve permitir cadastrar fornecedores. | FORNECEDOR — identificado por CNPJ e associado a ENTRADA_ESTOQUE. |
+| O sistema deve registrar os produtos e quantidades recebidos em cada entrada de estoque. | ITEM_ENTRADA_ESTOQUE — associa ENTRADA_ESTOQUE e PRODUTO, registrando quantidade. |
+| O sistema deve permitir consultar pedidos e pagamentos. | PEDIDO — associado a PAGAMENTO, permitindo consultar valores e formas de pagamento. |
+| O sistema deve permitir consolidar informações de vendas para apoiar o fechamento mensal. | PEDIDO + ITEM_PEDIDO + PAGAMENTO — associados para consolidar vendas e valores mensais. |
 
 ## 3.2 Requisitos Não Funcionais
 
@@ -135,9 +135,9 @@ Foram identificados os seguintes processos:
 
 ## 4.1 Regras Operacionais
 
-| Regras | Entidade e associação
-|---|---|
-| Todo pedido deve possuir um identificador único. | *CLIENTE* - Indentificado por CPF/CNPJ e associação a *PEDIDO*
+| Regras |
+|---|
+| Todo pedido deve possuir um identificador único. |
 | Todo pedido deve possuir pelo menos um item. | 
 | A quantidade de um item de pedido deve ser maior que zero. |
 | Cada item de pedido deve estar associado a um produto cadastrado. |
