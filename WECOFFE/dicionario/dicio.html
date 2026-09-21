@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dicionário</title>
+    <title>Dicionário de Dados — We Coffee</title>
     <link rel="icon" href="img/wecoffee_logo_transparente_512.png">
 </head>
 <style>
@@ -57,7 +57,7 @@
 
     .grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         gap: 14px;
         margin-bottom: 22px
     }
@@ -71,7 +71,8 @@
     }
 
     .card b {
-        font-size: 28px
+        font-size: 28px;
+        display: block;
     }
 
     .card span {
@@ -166,6 +167,16 @@
         font-size: 12px
     }
 
+    .tag.pk {
+        background: #e6f4ea;
+        color: #1e7a3d;
+    }
+
+    .tag.fk {
+        background: #fff1e6;
+        color: #b5560c;
+    }
+
     .schema {
         padding: 20px
     }
@@ -193,10 +204,73 @@
         border-radius: 5px
     }
 
+    .code-block {
+        background: #171827;
+        color: #d9d8e8;
+        padding: 16px 18px;
+        border-radius: 12px;
+        margin: 0 20px 18px;
+        font-family: "Courier New", monospace;
+        font-size: 13.5px;
+        line-height: 1.6;
+        overflow-x: auto;
+    }
+
+    .code-block .kw {
+        color: #b9a6ff;
+    }
+
+    .entity-desc {
+        padding: 0 20px 16px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .indices-note {
+        padding: 12px 20px 20px;
+        font-size: 13.5px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+    }
+
+    .indices-note b {
+        color: var(--text);
+    }
+
+    .flow-text {
+        padding: 20px;
+        line-height: 1.7;
+        color: var(--text);
+        font-size: 14.5px;
+    }
+
+    .flow-text p {
+        margin: 0 0 12px;
+    }
+
+    .conv-grid {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
     footer {
         text-align: center;
         color: var(--muted);
         padding: 30px
+    }
+
+    #entityCount {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    @media(max-width:1100px) {
+        .conv-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     @media(max-width:900px) {
@@ -221,1407 +295,893 @@
 </style>
 
 <body>
-    <h1>DICIONÁRIO DE DADOS - WECOFFE</h1> 
+    <h1>DICIONÁRIO DE DADOS - WECOFFEE</h1>
     <hr>
     <header>
-    <img  src="img/wecoffee.png" alt="WE Coffee" class="logo">
-    <p style="text-align: center;">WECOFFE</p>
+        <img src="img/wecoffee.png" alt="WE Coffee" class="logo">
+        <p style="text-align: center;">MOONLIGHT COFFEE CAFETERIA LTDA. — WE COFFEE</p>
     </header>
     <hr>
-    <h1 style="color:#475467">Essa é uma versão inicial da documentação do Dicionário de Dados - WECOFFE. </h1>
+    <h1 style="color:#475467">Dicionário de dados do modelo de banco (v1.0, 17/setembro/2026) — pedidos, produtos,
+        pagamentos, estoque e fornecedores.</h1>
     <main>
-        <section class="grind">
-            <div class="card"><b>98</b><span> registros de produtos (levantamento inicial)</span></div>
-            <div class="card"><b>70</b><span> registros de materiais/embalagens</span></div>
-            <div class="card"><b>18</b><span> registros de entidades</span></div>
-            <div class="card"><b>1</b><span> registros de fornecedores</span></div>
-            <div class="card"><b>1</b><span> cliente</span></div>
-            <div class="card"><b>1</b><span> documentação inicial</span></div>
+        <section class="grid">
+            <div class="card"><b>11</b><span>entidades no modelo</span></div>
+            <div class="card"><b>10</b><span>relacionamentos mapeados</span></div>
+            <div class="card"><b>45</b><span>atributos documentados</span></div>
+            <div class="card"><b>MySQL 8</b><span>SGBD / InnoDB</span></div>
+            <div class="card"><b>v1.0</b><span>17/set/2026</span></div>
         </section>
 
         <section class="panel">
             <div class="panel-head">
-                <h2>1. Estrutura sugerida do banco de dados</h2>
+                <h2>1. Modelo conceitual</h2>
             </div>
-            <div class="schema">
-                <div class="schema-grid">
-                    <div class="schema-item">
-                        <strong>Produtos</strong>
-                        <code>id_produto</code><br>
-                        <code>nome_produto</code><br>
-                        <code>descricao_produto</code><br>
-                        <code>preco_produto</code><br>
-                        <code>id_categoria</code><br>
+            <div class="flow-text">
+                <p>Este modelo representa a operação de uma unidade de cafeteria em que o cliente realiza um pedido
+                    por um dos três canais disponíveis (totem, balcão ou aplicativo), o pedido é composto por um ou
+                    mais itens de produto, é quitado por um ou mais pagamentos (permitindo divisão de conta) e
+                    consome o estoque, que por sua vez é reabastecido por entradas registradas a partir de
+                    fornecedores.</p>
+                <p><b>PEDIDO</b> é a entidade central do modelo: liga CLIENTE, FUNCIONARIO/TOTEM (conforme o canal),
+                    ITEM_PEDIDO e PAGAMENTO. <b>ITEM_PEDIDO</b> é a entidade associativa que resolve o relacionamento
+                    N:M entre PEDIDO e PRODUTO. <b>ITEM_ENTRADA</b> cumpre o mesmo papel entre ENTRADA_ESTOQUE e
+                    PRODUTO.</p>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Entidade</th>
+                            <th>Relaciona-se com</th>
+                            <th>Cardinalidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag">CLIENTE</span></td>
+                            <td><span class="tag">PEDIDO</span></td>
+                            <td>1:N — um cliente pode realizar vários pedidos; o pedido pode não ter cliente
+                                identificado</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">FUNCIONARIO</span></td>
+                            <td><span class="tag">PEDIDO</span></td>
+                            <td>1:N — um funcionário registra vários pedidos de balcão</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">TOTEM</span></td>
+                            <td><span class="tag">PEDIDO</span></td>
+                            <td>1:N — um totem registra vários pedidos</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">PEDIDO</span></td>
+                            <td><span class="tag">ITEM_PEDIDO</span></td>
+                            <td>1:N — todo pedido tem um ou mais itens</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">PRODUTO</span></td>
+                            <td><span class="tag">ITEM_PEDIDO</span></td>
+                            <td>1:N — um produto aparece em vários itens de pedido</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">PEDIDO</span></td>
+                            <td><span class="tag">PAGAMENTO</span></td>
+                            <td>1:N — um pedido pode ter mais de um pagamento (conta dividida)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">PRODUTO</span></td>
+                            <td><span class="tag">ESTOQUE</span></td>
+                            <td>1:1 — todo produto possui exatamente um registro de estoque</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">FORNECEDOR</span></td>
+                            <td><span class="tag">ENTRADA_ESTOQUE</span></td>
+                            <td>1:N — um fornecedor está associado a várias entradas</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">ENTRADA_ESTOQUE</span></td>
+                            <td><span class="tag">ITEM_ENTRADA</span></td>
+                            <td>1:N — uma entrada pode trazer vários produtos</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">PRODUTO</span></td>
+                            <td><span class="tag">ITEM_ENTRADA</span></td>
+                            <td>1:N — um produto aparece em várias entradas ao longo do tempo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="entity-desc">
+                Cliente é a pessoa física ou jurídica que realiza a compra, com cadastro opcional. Funcionário é a
+                pessoa que atende no balcão e registra o pedido em nome do cliente. Totem é o equipamento de
+                autoatendimento usado para registrar pedido e pagamento. Pedido é o evento de compra, associado a um
+                canal e a um valor total. Item de pedido é cada produto e quantidade vendidos dentro de um pedido.
+                Produto é o item comercializável (alimento ou bebida) do cardápio. Pagamento é o registro de
+                quitação (total ou parcial) de um pedido. Estoque é a quantidade atualmente disponível de cada
+                produto. Fornecedor é a pessoa jurídica que abastece a unidade com produtos. Entrada de estoque é o
+                evento de recebimento de produtos de um fornecedor. Item de entrada é cada produto e quantidade
+                recebidos dentro de uma entrada de estoque.
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2>2. Fluxo de dados (visão de DFD)</h2>
+            </div>
+            <div class="flow-text">
+                <p>Cliente chega à unidade e escolhe o canal (totem, balcão ou aplicativo) → o pedido é registrado em
+                    PEDIDO, vinculado a CLIENTE quando identificado e a FUNCIONARIO ou TOTEM conforme o canal → cada
+                    produto escolhido gera um registro em ITEM_PEDIDO, referenciando PRODUTO e preservando o preço
+                    praticado naquele momento → o pedido é quitado por um ou mais registros em PAGAMENTO, que podem
+                    somar formas diferentes quando a conta é dividida → a confirmação do pedido decrementa a
+                    QT_DISPONIVEL em ESTOQUE do produto vendido → quando o estoque de um produto se aproxima do
+                    limite, a unidade solicita reposição ao FORNECEDOR, que gera uma ENTRADA_ESTOQUE com um ou mais
+                    ITEM_ENTRADA, cada um incrementando de volta a QT_DISPONIVEL do produto correspondente → o
+                    conjunto de PEDIDO e PAGAMENTO do período sustenta a consulta gerencial de fechamento mensal
+                    citada no levantamento de requisitos.</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2>3. Convenções do dicionário</h2>
+            </div>
+            <div class="conv-grid">
+                <div>
+                    <div class="schema-item" style="margin-bottom:14px">
+                        <strong>SGBD</strong>
+                        MySQL 8, mecanismo de armazenamento InnoDB — cuida da persistência dos dados, do log de
+                        transações (redo/undo) e mantém o índice primário clusterizado por chave.
                     </div>
                     <div class="schema-item">
-                        <strong>Materiais/Embalagens</strong>
-                        <code>id_material</code><br>
-                        <code>nome_material</code><br>
-                        <code>tipo_material</code><br>
-                        <code>quantidade_material</code><br>
-                    </div>
-                    <div class="schema-item">
-                        <strong>Entidades</strong>
-                        <code>id_entidade</code><br>
-                        <code>nome_entidade</code><br>
-                        <code>endereco_entidade</code><br>
-                        <code>telefone_entidade</code><br>
-                    </div>
-                    <div class="schema-item">
-                        <strong>Clientes</strong>
-                        <code>id_cliente</code><br>
-                        <code>nome_cliente</code><br>
-                        <code>endereco_cliente</code><br>
-                        <code>telefone_cliente</code><br>
-                    </div>
-                    <div class="schema-item">
-                        <strong>Fornecedores</strong>
-                        <code>id_fornecedor</code><br>
-                        <code>nome_fornecedor</code><br>
-                        <code>quantidade_fornecedor</code><br>
-                        <code>telefone_fornecedor</code><br>
+                        <strong>Codificação de caracteres</strong>
+                        utf8mb4 com collation utf8mb4_0900_ai_ci — cobre acentuação do português (nomes de clientes,
+                        produtos, observações) sem perda, e é compatível com qualquer caractere Unicode usado em
+                        campos de texto livre.
                     </div>
                 </div>
-        </section>
-        <section class="panel">
-            <div class="panel-head">
-                <h2>2. Dicionário — Produtos e Itens</h2>
-                <input id="searchProducts" onkeyup="filterTable('products',this.value)"
-                    placeholder="Pesquisar código, produto ou categoria...">
-                <select onchange="filterCategory('products',this.value)">
-                    <option value="">Todas as categorias</option>
-                    <option>Café</option>
-                    <option>Padaria/Pães</option>
-                    <option>Refrigerados/Congelados/Frutas</option>
-                    <option>Crepes</option>
-                    <option>Doces</option>
-                    <option>Laticínios</option>
-                    <option>Ingredientes</option>
-                    <option>Bebidas</option>
-                    <option>Xaropes</option>
-                    <option>Bases</option>
-                </select>
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Símbolo</th>
+                                <th>Significado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>=</code></td>
+                                <td>é composto de</td>
+                            </tr>
+                            <tr>
+                                <td><code>+</code></td>
+                                <td>e (conecta elementos obrigatórios)</td>
+                            </tr>
+                            <tr>
+                                <td><code>( )</code></td>
+                                <td>opcional</td>
+                            </tr>
+                            <tr>
+                                <td><code>{ }, n{ }m</code></td>
+                                <td>iteração, com limite mínimo n e máximo m</td>
+                            </tr>
+                            <tr>
+                                <td><code>[ | ]</code></td>
+                                <td>escolha obrigatória entre alternativas</td>
+                            </tr>
+                            <tr>
+                                <td><code>/ /</code></td>
+                                <td>rótulo de um grupo repetitivo</td>
+                            </tr>
+                            <tr>
+                                <td><code>@</code></td>
+                                <td>identificador (chave primária)</td>
+                            </tr>
+                            <tr>
+                                <td><code>* *</code></td>
+                                <td>comentário, fora da estrutura formal</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="note"> <b>Importante!!!:</b> códigos e nomes abaixo são uma transcrição inicial das fotos. Os
-                campos “Descrição”, “Unidade” e “Preço” ficaram como “A confirmar(Valor ficticio, não esquecer)”  Esses dados podem ser enriquecidos usando o catálogo oficial/iFood da unidade. = Precisamos mudar isso!
-            </div>
-            <div class="table-wrap">
-                <table id="products">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Nome do produto</th>
-                            <th>Categoria</th>
-                            <th>Unidade</th>
-                            <th>Descrição</th>
-                            <th>Preço</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>3000271</td>
-                            <td>Açúcar líquido (Gludex 223)</td>
-                            <td>Insumos</td>
-                            <td>Açúcar líquido</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000177</td>
-                            <td>Chá verde</td>
-                            <td>Bebidas/Chás</td>
-                            <td>Chá</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000028</td>
-                            <td>Biscoito Oreo</td>
-                            <td>Ingredientes</td>
-                            <td>Biscoito</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000157</td>
-                            <td>Negresco triturado KG</td>
-                            <td>Ingredientes</td>
-                            <td>Kg</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000104</td>
-                            <td>Pepper Original 47g C/40</td>
-                            <td>Ingredientes</td>
-                            <td>Pacote</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000404</td>
-                            <td>Mesclado de pistache</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000729</td>
-                            <td>Pó de matcha</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000559</td>
-                            <td>Xarope Tchai</td>
-                            <td>Xaropes</td>
-                            <td>Garrafa</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000855</td>
-                            <td>Xarope Toranja</td>
-                            <td>Xaropes</td>
-                            <td>Garrafa</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000037</td>
-                            <td>Xarope Curaçao</td>
-                            <td>Xaropes</td>
-                            <td>Garrafa</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000423</td>
-                            <td>Chocolate em pó</td>
-                            <td>Ingredientes</td>
-                            <td>Kg</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000038</td>
-                            <td>Bola de esfera</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000450</td>
-                            <td>Nesquik</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000443</td>
-                            <td>Café para espresso</td>
-                            <td>Café</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000526</td>
-                            <td>Café para coado</td>
-                            <td>Café</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000333</td>
-                            <td>Leite integral</td>
-                            <td>Laticínios</td>
-                            <td>Litro</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000023</td>
-                            <td>Bebida de aveia Naveia 1L</td>
-                            <td>Bebidas</td>
-                            <td>Litro</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000275</td>
-                            <td>Açúcar sachê União</td>
-                            <td>Insumos</td>
-                            <td>Sachê</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000098</td>
-                            <td>Adoçante em pó sucralose</td>
-                            <td>Insumos</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000022</td>
-                            <td>Filtro de papel Melitta para coado</td>
-                            <td>Café</td>
-                            <td>Unidade/pacote</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000007</td>
-                            <td>Açúcar mascavo</td>
-                            <td>Insumos</td>
-                            <td>Kg</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000041</td>
-                            <td>Cacau em pó</td>
-                            <td>Ingredientes</td>
-                            <td>Kg</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000009</td>
-                            <td>Calda caramelo 1,8L</td>
-                            <td>Calda</td>
-                            <td>Garrafa</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000027</td>
-                            <td>Canela em pó pura KG</td>
-                            <td>Ingredientes</td>
-                            <td>Kg</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000070</td>
-                            <td>Doce de leite La Sereníssima</td>
-                            <td>Laticínios</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000010</td>
-                            <td>Água mineral com gás CRF PET</td>
-                            <td>Bebidas</td>
-                            <td>Garrafa</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000011</td>
-                            <td>Água mineral sem gás CRF PET</td>
-                            <td>Bebidas</td>
-                            <td>Garrafa</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000616</td>
-                            <td>Chocolate Elefantinho</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000977</td>
-                            <td>Café Nº 01</td>
-                            <td>Café</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000978</td>
-                            <td>Café Nº 02</td>
-                            <td>Café</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000161</td>
-                            <td>Sorvete de baunilha</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000422</td>
-                            <td>Sorvete Perfeito</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000997</td>
-                            <td>Sorvete Bombom</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000029</td>
-                            <td>Blueberry congelado</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000082</td>
-                            <td>Framboesa congelada</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000213</td>
-                            <td>Maracujá polpa congelada</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000119</td>
-                            <td>Queijo mussarela Presidente fatiado</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000144</td>
-                            <td>Salame italiano fatiado Seara</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000021</td>
-                            <td>Bacon fatiado 2,4mm</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000133</td>
-                            <td>Presunto</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000141</td>
-                            <td>Rúcula</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000103</td>
-                            <td>Limão Tahiti</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000118</td>
-                            <td>Morango Natura</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000115</td>
-                            <td>Blueberry 125g in natura</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3001199</td>
-                            <td>Frutas vermelhas congeladas</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000994</td>
-                            <td>Morango congelado</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000878</td>
-                            <td>Toranja</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3001235</td>
-                            <td>Matcha em pó</td>
-                            <td>Refrigerados/Congelados/Frutas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000575</td>
-                            <td>Tomate seco</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000274</td>
-                            <td>Choco Crispi leite 800g Monali</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000097</td>
-                            <td>Leite em pó integral 750g</td>
-                            <td>Laticínios</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000064</td>
-                            <td>Suco limão</td>
-                            <td>Bebidas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000375</td>
-                            <td>Base manga</td>
-                            <td>Bases</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000396</td>
-                            <td>Base brownie</td>
-                            <td>Bases</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000397</td>
-                            <td>Base sensação</td>
-                            <td>Bases</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000004</td>
-                            <td>Salty</td>
-                            <td>Produtos</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000993</td>
-                            <td>Chantilly</td>
-                            <td>Confeitaria</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000990</td>
-                            <td>Ferrero</td>
-                            <td>Confeitaria</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184136</td>
-                            <td>Bubblelichia</td>
-                            <td>Bebidas</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000064</td>
-                            <td>Chocoamendoa</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000375</td>
-                            <td>Alho</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000879</td>
-                            <td>Bun de queijo</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000981</td>
-                            <td>Croissant</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000049</td>
-                            <td>Mia grande</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000705</td>
-                            <td>Cinnamon</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000106</td>
-                            <td>Bagel parmesão</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000956</td>
-                            <td>Bagel gergelim</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000682</td>
-                            <td>Folhado caprese</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184045</td>
-                            <td>Folheado frango</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184052</td>
-                            <td>Empada frango</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184148</td>
-                            <td>Empada palmito</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184149</td>
-                            <td>Fritas</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184213</td>
-                            <td>W.E Burger</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184215</td>
-                            <td>Enroladinho retro</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184244</td>
-                            <td>Pão de queijo</td>
-                            <td>Padaria/Pães</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000995</td>
-                            <td>Catupiry</td>
-                            <td>Laticínios</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000349</td>
-                            <td>Cream cheese</td>
-                            <td>Laticínios</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000108</td>
-                            <td>Manteiga</td>
-                            <td>Laticínios</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>3000123</td>
-                            <td>Ovo de galinha</td>
-                            <td>Ingredientes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184204</td>
-                            <td>Pão de mel chocolate branco</td>
-                            <td>Doces</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>184205</td>
-                            <td>Pão de mel chocolate ao leite</td>
-                            <td>Doces</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000164</td>
-                            <td>Geléia manga</td>
-                            <td>Café</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000745</td>
-                            <td>Geléia morango</td>
-                            <td>Café</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000000</td>
-                            <td>Mocha</td>
-                            <td>Café</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000185</td>
-                            <td>Recheio Magic</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000650</td>
-                            <td>Recheio Roll Pistache</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000651</td>
-                            <td>Recheio Roll Choco</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000655</td>
-                            <td>Recheio Any Pistache</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000656</td>
-                            <td>Cobertura Any Choco</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000860</td>
-                            <td>Creme americano</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000131</td>
-                            <td>Pistache triturado</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000780</td>
-                            <td>Nozes caramelizadas</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000876</td>
-                            <td>Caramelo</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2000876</td>
-                            <td>Creme branco</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2002106</td>
-                            <td>Recheio Choco x pistache</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2001058</td>
-                            <td>Recheio Choco baunilha</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2002105</td>
-                            <td>Calda chocolate</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>2002104</td>
-                            <td>Ketchup doce</td>
-                            <td>Crepes</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                            <td>A confirmar</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="note">
+                <b>Prefixos:</b> <code>NM_</code> nome, <code>DT_</code> data, <code>ID_</code> identificador (não
+                sofre operação matemática), <code>CD_</code> código de domínio, <code>QT_</code> quantidade,
+                <code>TP_</code> tipo (categorização), <code>IN_</code> indicador booleano, <code>VL_</code> valor
+                monetário, <code>DS_</code> descrição/texto livre.
+                <br><br>
+                <b>Nomenclatura física:</b> as colunas físicas do banco (as mesmas usadas no README do projeto)
+                seguem <code>snake_case</code> minúsculo, sem prefixo — por isso cada atributo nas tabelas abaixo traz
+                o nome lógico prefixado (dicionário) e a coluna física correspondente na tabela implementada.
             </div>
         </section>
 
         <section class="panel">
             <div class="panel-head">
-                <h2>3. Dicionário — Materiais, embalagens e limpeza</h2>
-                <input id="searchMaterials" onkeyup="filterTable('materials',this.value)"
-                    placeholder="Pesquisar material ou código...">
+                <h2>4. Dicionário de dados por entidade</h2>
+                <input id="searchEntities" onkeyup="filterEntities(this.value)"
+                    placeholder="Pesquisar entidade ou atributo...">
+                <span id="entityCount"></span>
             </div>
-            <div class="note">Estes registros foram separados dos produtos porque representam insumos operacionais,
-                embalagens e materiais de limpeza. Isso deixa o modelo do banco mais organizado.</div>
+        </section>
+
+        <!-- CLIENTE -->
+        <section class="panel entity-panel" data-entity="CLIENTE cliente id_cliente nome cpf cnpj">
+            <div class="panel-head">
+                <h2>CLIENTE</h2>
+            </div>
+            <div class="code-block">CLIENTE = @ID_CLIENTE + NM_CLIENTE + (ID_CPF_CNPJ)</div>
+            <div class="entity-desc"><code>@ID_CLIENTE</code> é o identificador único; <code>NM_CLIENTE</code> é
+                obrigatório; <code>(ID_CPF_CNPJ)</code> é opcional porque o cliente pode não informar CPF/CNPJ no
+                momento do pedido — quando informado, deve ser único.</div>
             <div class="table-wrap">
-                <table id="materials">
+                <table>
                     <thead>
                         <tr>
-                            <th>Código</th>
-                            <th>Material</th>
-                            <th>Grupo</th>
-                            <th>Tipo</th>
-                            <th>Observação</th>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>4000025</td>
-                            <td>Bobina termo Scrip 80mm x 40m</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000013</td>
-                            <td>Caixa de croissant de quadrada</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000046</td>
-                            <td>Rolo Perflex</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000066</td>
-                            <td>Esponja dupla face</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000347</td>
-                            <td>Bobina papel toalha rolo</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000006</td>
-                            <td>Caneta mágica China</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000003</td>
-                            <td>Faca</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000015</td>
-                            <td>Caixa de doce quadrada</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000028</td>
-                            <td>Copo Boboshake</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000098</td>
-                            <td>Copo 330ml</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000080</td>
-                            <td>Canudo médio</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000160</td>
-                            <td>Manga confeiteiro</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000195</td>
-                            <td>Papel bandeja</td>
-                            <td>Caixa/Totem</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000020</td>
-                            <td>Copo polipropileno</td>
-                            <td>Embalagens Chá</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000021</td>
-                            <td>Copo Salt Cream</td>
-                            <td>Embalagens Chá</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000028</td>
-                            <td>Copo Boboshake</td>
-                            <td>Embalagens Chá</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000018</td>
-                            <td>Tampa Salty Cream</td>
-                            <td>Embalagens Chá</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000049</td>
-                            <td>Tampa bolha</td>
-                            <td>Embalagens Chá</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000064</td>
-                            <td>Lâmina de copo delivery</td>
-                            <td>Embalagens Chá</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000022</td>
-                            <td>Copo capuccino</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000023</td>
-                            <td>Copo espresso</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000024</td>
-                            <td>Copo café transparente</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000098</td>
-                            <td>Copo de papel 330ml</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000034</td>
-                            <td>Tampa transparente 93</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000017</td>
-                            <td>Tampa branca de café capuccino</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000027</td>
-                            <td>Tampa lisa 90 - transparente</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000035</td>
-                            <td>Tampa bolha 92</td>
-                            <td>Embalagens Café</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000048</td>
-                            <td>Etiqueta de identificação - azul</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000977</td>
-                            <td>Saco adesivo de choux</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000012</td>
-                            <td>Base quadrada</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000098</td>
-                            <td>El manteiga 40x40 c/40 Cristalex assadeira</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000055</td>
-                            <td>Caixa New York</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000160</td>
-                            <td>Bobina filme 60cm (grande)</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000182</td>
-                            <td>Bobina filme 40cm (média)</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000184</td>
-                            <td>Bobina filme 28cm (pequena)</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000256</td>
-                            <td>Bobina picotada 40x60 (pequena)</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000313</td>
-                            <td>Bobina picotada 60x1 (grande)</td>
-                            <td>Embalagens Padaria</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000061</td>
-                            <td>Saco de colher de sobremesa</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000060</td>
-                            <td>Saco talher c/500</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000353</td>
-                            <td>Her plástico sobremesa branca c/150 elite</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000002</td>
-                            <td>Garfo descartável branco c/500 und</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000003</td>
-                            <td>Faca descartável branca</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000495</td>
-                            <td>Papel bandeja p/</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000463</td>
-                            <td>Saco de 1 bandeja</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000464</td>
-                            <td>Saco de croissant</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000471</td>
-                            <td>Saco papel (China)</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000492</td>
-                            <td>Saco flat food</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000013</td>
-                            <td>Caixa de croissant de 1</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000014</td>
-                            <td>Caixa de croissant de 2</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000015</td>
-                            <td>Caixa de doce quadrada chux</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000006</td>
-                            <td>Caixa de magic stick (China)</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000072</td>
-                            <td>Tampa de magic stick (China)</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000473</td>
-                            <td>Manga confeiteiro</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000018</td>
-                            <td>CD-3004 canudo médio</td>
-                            <td>Embalagens Expedição</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000066</td>
-                            <td>Esponja dupla face</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000341</td>
-                            <td>Esponja Magic</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000044</td>
-                            <td>Esponja fibraço</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000046</td>
-                            <td>Rolo Perflex multiuso azul</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>6000053</td>
-                            <td>Saco lixo preto 20L</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000055</td>
-                            <td>Saco lixo preto 40L</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000306</td>
-                            <td>Saco lixo preto 60L</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000085</td>
-                            <td>Saco lixo preto 100L</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000319</td>
-                            <td>Luva latex limpeza TAM M</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000116</td>
-                            <td>Luva latex limpeza TAM M</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000285</td>
-                            <td>Luva latex limpeza TAM G</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000050</td>
-                            <td>Touca descartável c/100 und</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000505</td>
-                            <td>Touca descartável preta</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000065</td>
-                            <td>Pano chão branco Souza 43x65</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000337</td>
-                            <td>Pano chão xadrez Souza 48x65</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
-                        </tr>
-                        <tr>
-                            <td>4000534</td>
-                            <td>Pano higiênico rolaço 18 (funcionário)</td>
-                            <td>Limpeza</td>
-                            <td>Material</td>
-                            <td>A confirmar</td>
+                            <td><span class="tag pk">ID_CLIENTE</span></td>
+                            <td><code>id_cliente</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do cliente; não sofre operação matemática.</td>
+                        </tr>
+                        <tr>
+                            <td>NM_CLIENTE</td>
+                            <td><code>nome</code></td>
+                            <td>varchar(120)</td>
+                            <td>Sim</td>
+                            <td>Nome do cliente, usado na identificação para entrega e no histórico de pedidos.</td>
+                        </tr>
+                        <tr>
+                            <td>ID_CPF_CNPJ</td>
+                            <td><code>cpf_cnpj</code></td>
+                            <td>varchar(18)</td>
+                            <td>Não (único quando informado)</td>
+                            <td>CPF ou CNPJ do cliente; dado pessoal, coletado apenas quando o próprio cliente o
+                                informa.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_CLIENTE</code> (clusterizado); índice único em
+                <code>ID_CPF_CNPJ</code> (permite nulo, mas impede duplicidade quando preenchido).</div>
         </section>
+
+        <!-- FUNCIONARIO -->
+        <section class="panel entity-panel" data-entity="FUNCIONARIO funcionario id_funcionario nome cargo">
+            <div class="panel-head">
+                <h2>FUNCIONARIO</h2>
+            </div>
+            <div class="code-block">FUNCIONARIO = @ID_FUNCIONARIO + NM_FUNCIONARIO + DS_CARGO</div>
+            <div class="entity-desc">Os três campos são obrigatórios e conectados por <code>+</code>; não há grupo
+                opcional nesta entidade.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_FUNCIONARIO</span></td>
+                            <td><code>id_funcionario</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do funcionário.</td>
+                        </tr>
+                        <tr>
+                            <td>NM_FUNCIONARIO</td>
+                            <td><code>nome</code></td>
+                            <td>varchar(120)</td>
+                            <td>Sim</td>
+                            <td>Nome do funcionário; aparece nas consultas de pedidos de balcão.</td>
+                        </tr>
+                        <tr>
+                            <td>DS_CARGO</td>
+                            <td><code>cargo</code></td>
+                            <td>varchar(60)</td>
+                            <td>Sim</td>
+                            <td>Função exercida (ex.: atendente, barista); usada em relatórios de produtividade por
+                                cargo.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_FUNCIONARIO</code>.</div>
+        </section>
+
+        <!-- TOTEM -->
+        <section class="panel entity-panel" data-entity="TOTEM totem id_totem tablet localizacao status">
+            <div class="panel-head">
+                <h2>TOTEM</h2>
+            </div>
+            <div class="code-block">TOTEM = @ID_TOTEM + ID_TABLET + DS_LOCALIZACAO + TP_STATUS</div>
+            <div class="entity-desc"><code>ID_TABLET</code> usa prefixo de identificador por ser o número de
+                série/identificação do equipamento, não um código de domínio interno; <code>TP_STATUS</code>
+                categoriza a situação do equipamento.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_TOTEM</span></td>
+                            <td><code>id_totem</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do totem.</td>
+                        </tr>
+                        <tr>
+                            <td>ID_TABLET</td>
+                            <td><code>identificador_tablet</code></td>
+                            <td>varchar(50)</td>
+                            <td>Sim (único)</td>
+                            <td>Identificação física do equipamento (tablet); evita duplicidade de cadastro do mesmo
+                                aparelho.</td>
+                        </tr>
+                        <tr>
+                            <td>DS_LOCALIZACAO</td>
+                            <td><code>localizacao_loja</code></td>
+                            <td>varchar(100)</td>
+                            <td>Sim</td>
+                            <td>Ponto de instalação do equipamento dentro da unidade.</td>
+                        </tr>
+                        <tr>
+                            <td>TP_STATUS</td>
+                            <td><code>status</code></td>
+                            <td>char(1) [A|I]</td>
+                            <td>Sim</td>
+                            <td>Situação do equipamento: <b>A</b>tivo ou <b>I</b>nativo; totens inativos não recebem
+                                novos pedidos.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_TOTEM</code>; índice único em
+                <code>ID_TABLET</code>.</div>
+        </section>
+
+        <!-- PEDIDO -->
+        <section class="panel entity-panel"
+            data-entity="PEDIDO pedido id_pedido cliente funcionario totem canal status preparo valor total">
+            <div class="panel-head">
+                <h2>PEDIDO</h2>
+            </div>
+            <div class="code-block">PEDIDO = @ID_PEDIDO + (ID_CLIENTE) + (ID_FUNCIONARIO) + (ID_TOTEM) +
+                DT_HORA_PEDIDO +<br>
+                &nbsp;&nbsp;[TP_TOTEM | TP_BALCAO | TP_APLICATIVO] + VL_TOTAL + TP_STATUS_PREPARO</div>
+            <div class="entity-desc"><code>(ID_CLIENTE)</code> é opcional porque o pedido pode não ter cliente
+                identificado; <code>(ID_FUNCIONARIO)</code> e <code>(ID_TOTEM)</code> são condicionais — preenchidos
+                conforme o canal escolhido em <code>[TP_TOTEM | TP_BALCAO | TP_APLICATIVO]</code>, que exige escolher
+                exatamente um canal; <code>VL_TOTAL</code> é calculado a partir da soma dos itens do pedido.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_PEDIDO</span></td>
+                            <td><code>id_pedido</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do pedido.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_CLIENTE</span></td>
+                            <td><code>id_cliente</code></td>
+                            <td>integer</td>
+                            <td>Não (FK)</td>
+                            <td>Cliente relacionado, quando identificado.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_FUNCIONARIO</span></td>
+                            <td><code>id_funcionario</code></td>
+                            <td>integer</td>
+                            <td>Condicional (FK)</td>
+                            <td>Preenchido quando <code>TP_CANAL_PEDIDO = BALCAO</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_TOTEM</span></td>
+                            <td><code>id_totem</code></td>
+                            <td>integer</td>
+                            <td>Condicional (FK)</td>
+                            <td>Preenchido quando <code>TP_CANAL_PEDIDO = TOTEM</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>DT_HORA_PEDIDO</td>
+                            <td><code>data_hora</code></td>
+                            <td>datetime</td>
+                            <td>Sim</td>
+                            <td>Data e horário do registro do pedido.</td>
+                        </tr>
+                        <tr>
+                            <td>TP_CANAL_PEDIDO</td>
+                            <td><code>canal_pedido</code></td>
+                            <td>char(1) [T|B|A]</td>
+                            <td>Sim (escolha)</td>
+                            <td>Canal de origem: <b>T</b>otem, <b>B</b>alcão ou <b>A</b>plicativo; define quais
+                                campos condicionais se aplicam.</td>
+                        </tr>
+                        <tr>
+                            <td>VL_TOTAL</td>
+                            <td><code>valor_total</code></td>
+                            <td>decimal(10,2)</td>
+                            <td>Sim (calculado)</td>
+                            <td>Soma dos subtotais dos itens do pedido; base para o fechamento mensal.</td>
+                        </tr>
+                        <tr>
+                            <td>TP_STATUS_PREPARO</td>
+                            <td><code>status_preparo</code></td>
+                            <td>varchar(20) [RECEBIDO|EM_PREPARO|PRONTO|ENTREGUE]</td>
+                            <td>Sim</td>
+                            <td>Situação do pedido na esteira de preparo/entrega.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_PEDIDO</code>; índices em <code>ID_CLIENTE</code>,
+                <code>ID_FUNCIONARIO</code>, <code>ID_TOTEM</code> (FKs) e em <code>DT_HORA_PEDIDO</code> (consultas e
+                fechamento por período).</div>
+        </section>
+
+        <!-- ITEM_PEDIDO -->
+        <section class="panel entity-panel"
+            data-entity="ITEM_PEDIDO item pedido id_item quantidade preco unitario">
+            <div class="panel-head">
+                <h2>ITEM_PEDIDO</h2>
+            </div>
+            <div class="code-block">ITEM_PEDIDO = @ID_ITEM + ID_PEDIDO + ID_PRODUTO + QT_ITEM + VL_UNITARIO</div>
+            <div class="entity-desc"><code>ID_PEDIDO</code> e <code>ID_PRODUTO</code> são as chaves estrangeiras que
+                resolvem a relação N:M entre PEDIDO e PRODUTO; <code>VL_UNITARIO</code> é copiado de PRODUTO no
+                momento da venda para preservar o preço histórico, mesmo que o preço do produto mude depois.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_ITEM</span></td>
+                            <td><code>id_item</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do item de pedido.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_PEDIDO</span></td>
+                            <td><code>id_pedido</code></td>
+                            <td>integer</td>
+                            <td>Sim (FK)</td>
+                            <td>Pedido ao qual o item pertence.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_PRODUTO</span></td>
+                            <td><code>id_produto</code></td>
+                            <td>integer</td>
+                            <td>Sim (FK)</td>
+                            <td>Produto vendido nesse item.</td>
+                        </tr>
+                        <tr>
+                            <td>QT_ITEM</td>
+                            <td><code>quantidade</code></td>
+                            <td>integer</td>
+                            <td>Sim (&gt;0)</td>
+                            <td>Quantidade do produto naquele item.</td>
+                        </tr>
+                        <tr>
+                            <td>VL_UNITARIO</td>
+                            <td><code>preco_unitario</code></td>
+                            <td>decimal(10,2)</td>
+                            <td>Sim</td>
+                            <td>Preço praticado no momento da venda; preserva histórico independente de reajustes
+                                futuros.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_ITEM</code>; índices em <code>ID_PEDIDO</code> e
+                <code>ID_PRODUTO</code> (FKs).</div>
+        </section>
+
+        <!-- PRODUTO -->
+        <section class="panel entity-panel" data-entity="PRODUTO produto id_produto nome preco">
+            <div class="panel-head">
+                <h2>PRODUTO</h2>
+            </div>
+            <div class="code-block">PRODUTO = @ID_PRODUTO + NM_PRODUTO + VL_PRECO</div>
+            <div class="entity-desc">Estrutura simples — os três campos são obrigatórios; o preço de venda vigente
+                fica aqui, enquanto o preço histórico de cada venda fica em ITEM_PEDIDO.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_PRODUTO</span></td>
+                            <td><code>id_produto</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do produto.</td>
+                        </tr>
+                        <tr>
+                            <td>NM_PRODUTO</td>
+                            <td><code>nome</code></td>
+                            <td>varchar(120)</td>
+                            <td>Sim</td>
+                            <td>Nome do produto exibido no cardápio/comanda.</td>
+                        </tr>
+                        <tr>
+                            <td>VL_PRECO</td>
+                            <td><code>preco</code></td>
+                            <td>decimal(10,2)</td>
+                            <td>Sim (&gt;0)</td>
+                            <td>Preço de venda atual do produto.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_PRODUTO</code>; índice em <code>NM_PRODUTO</code>
+                (busca por nome no cadastro/cardápio).</div>
+        </section>
+
+        <!-- PAGAMENTO -->
+        <section class="panel entity-panel"
+            data-entity="PAGAMENTO pagamento id_pagamento pix credito debito dinheiro aprovado recusado">
+            <div class="panel-head">
+                <h2>PAGAMENTO</h2>
+            </div>
+            <div class="code-block">PAGAMENTO = @ID_PAGAMENTO + ID_PEDIDO + [TP_PIX | TP_CREDITO | TP_DEBITO |
+                TP_DINHEIRO] +<br>
+                &nbsp;&nbsp;VL_PAGAMENTO + [TP_APROVADO | TP_RECUSADO] + DT_HORA_PAGAMENTO</div>
+            <div class="entity-desc">Um pedido pode ter <code>1{ }N</code> pagamentos (não representado aqui como
+                iteração explícita porque cada pagamento é uma linha independente ligada por <code>ID_PEDIDO</code>),
+                o que permite dividir a conta entre formas diferentes; <code>[TP_PIX | TP_CREDITO | TP_DEBITO |
+                    TP_DINHEIRO]</code> exige escolher exatamente uma forma por registro de pagamento.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_PAGAMENTO</span></td>
+                            <td><code>id_pagamento</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do pagamento.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_PEDIDO</span></td>
+                            <td><code>id_pedido</code></td>
+                            <td>integer</td>
+                            <td>Sim (FK)</td>
+                            <td>Pedido a que este pagamento se refere.</td>
+                        </tr>
+                        <tr>
+                            <td>TP_FORMA_PAGTO</td>
+                            <td><code>forma_pagamento</code></td>
+                            <td>char(1) [P|C|D|X]</td>
+                            <td>Sim (escolha)</td>
+                            <td>Forma de pagamento: <b>P</b>IX, <b>C</b>rédito, <b>D</b>ébito ou dinheiro
+                                (<b>X</b>).</td>
+                        </tr>
+                        <tr>
+                            <td>VL_PAGAMENTO</td>
+                            <td><code>valor_pagamento</code></td>
+                            <td>decimal(10,2)</td>
+                            <td>Sim (&gt;0)</td>
+                            <td>Valor quitado nesta forma; a soma dos pagamentos de um pedido deve igualar
+                                <code>VL_TOTAL</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>TP_STATUS_PGTO</td>
+                            <td><code>status_pagamento</code></td>
+                            <td>char(1) [A|R]</td>
+                            <td>Sim (escolha)</td>
+                            <td>Situação do pagamento: <b>A</b>provado ou <b>R</b>ecusado.</td>
+                        </tr>
+                        <tr>
+                            <td>DT_HORA_PAGAMENTO</td>
+                            <td><code>data_hora_pagamento</code></td>
+                            <td>datetime</td>
+                            <td>Sim</td>
+                            <td>Data e horário em que o pagamento foi processado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_PAGAMENTO</code>; índice em
+                <code>ID_PEDIDO</code> (localizar todos os pagamentos de um pedido); índice em
+                <code>DT_HORA_PAGAMENTO</code> (fechamento mensal).</div>
+        </section>
+
+        <!-- ESTOQUE -->
+        <section class="panel entity-panel"
+            data-entity="ESTOQUE estoque id_estoque quantidade disponivel atualizacao">
+            <div class="panel-head">
+                <h2>ESTOQUE</h2>
+            </div>
+            <div class="code-block">ESTOQUE = @ID_ESTOQUE + ID_PRODUTO + QT_DISPONIVEL + DT_ATUALIZACAO</div>
+            <div class="entity-desc"><code>ID_PRODUTO</code> obrigatório e único garante o 1:1 com PRODUTO, evitando
+                duas fontes de quantidade disponível para o mesmo item.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_ESTOQUE</span></td>
+                            <td><code>id_estoque</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do registro de estoque.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_PRODUTO</span></td>
+                            <td><code>id_produto</code></td>
+                            <td>integer</td>
+                            <td>Sim (FK, único)</td>
+                            <td>Produto controlado; a unicidade garante o 1:1.</td>
+                        </tr>
+                        <tr>
+                            <td>QT_DISPONIVEL</td>
+                            <td><code>quantidade</code></td>
+                            <td>integer</td>
+                            <td>Sim (&gt;=0)</td>
+                            <td>Quantidade atualmente disponível para venda.</td>
+                        </tr>
+                        <tr>
+                            <td>DT_ATUALIZACAO</td>
+                            <td><code>data_atualizacao</code></td>
+                            <td>datetime</td>
+                            <td>Sim</td>
+                            <td>Data/hora da última movimentação (venda ou entrada) que alterou a quantidade.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_ESTOQUE</code>; índice único em
+                <code>ID_PRODUTO</code> (garante o 1:1 e acelera "consultar estoque do produto X").</div>
+        </section>
+
+        <!-- FORNECEDOR -->
+        <section class="panel entity-panel" data-entity="FORNECEDOR fornecedor id_fornecedor nome">
+            <div class="panel-head">
+                <h2>FORNECEDOR</h2>
+            </div>
+            <div class="code-block">FORNECEDOR = @ID_FORNECEDOR + NM_FORNECEDOR</div>
+            <div class="entity-desc">Estrutura mínima nesta versão do modelo, alinhada ao que foi levantado na
+                entrevista (contato e dados fiscais completos do fornecedor não foram exigidos no escopo atual).
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_FORNECEDOR</span></td>
+                            <td><code>id_fornecedor</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do fornecedor.</td>
+                        </tr>
+                        <tr>
+                            <td>NM_FORNECEDOR</td>
+                            <td><code>nome</code></td>
+                            <td>varchar(120)</td>
+                            <td>Sim</td>
+                            <td>Razão social ou nome fantasia do fornecedor.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_FORNECEDOR</code>.</div>
+        </section>
+
+        <!-- ENTRADA_ESTOQUE -->
+        <section class="panel entity-panel"
+            data-entity="ENTRADA_ESTOQUE entrada estoque id_entrada fornecedor data">
+            <div class="panel-head">
+                <h2>ENTRADA_ESTOQUE</h2>
+            </div>
+            <div class="code-block">ENTRADA_ESTOQUE = @ID_ENTRADA + ID_FORNECEDOR + DT_ENTRADA</div>
+            <div class="entity-desc"><code>ID_FORNECEDOR</code> obrigatório liga toda entrada a um fornecedor
+                conhecido; os produtos e quantidades recebidos ficam detalhados em ITEM_ENTRADA, entidade associativa
+                desta com PRODUTO.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_ENTRADA</span></td>
+                            <td><code>id_entrada</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único da entrada de estoque.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_FORNECEDOR</span></td>
+                            <td><code>id_fornecedor</code></td>
+                            <td>integer</td>
+                            <td>Sim (FK)</td>
+                            <td>Fornecedor responsável pelo recebimento.</td>
+                        </tr>
+                        <tr>
+                            <td>DT_ENTRADA</td>
+                            <td><code>data_entrada</code></td>
+                            <td>date</td>
+                            <td>Sim</td>
+                            <td>Data em que os produtos foram recebidos.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_ENTRADA</code>; índice em
+                <code>ID_FORNECEDOR</code> (FK); índice em <code>DT_ENTRADA</code> (relatórios por período).</div>
+        </section>
+
+        <!-- ITEM_ENTRADA -->
+        <section class="panel entity-panel"
+            data-entity="ITEM_ENTRADA item entrada id_item_entrada quantidade recebida">
+            <div class="panel-head">
+                <h2>ITEM_ENTRADA</h2>
+            </div>
+            <div class="code-block">ITEM_ENTRADA = @ID_ITEM_ENTRADA + ID_ENTRADA + ID_PRODUTO + QT_RECEBIDA</div>
+            <div class="entity-desc">Mesma lógica de ITEM_PEDIDO, porém do lado do recebimento — resolve a relação
+                N:M entre ENTRADA_ESTOQUE e PRODUTO.</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atributo</th>
+                            <th>Coluna no BD</th>
+                            <th>Tipo físico</th>
+                            <th>Obrigatório</th>
+                            <th>Significado e relevância</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag pk">ID_ITEM_ENTRADA</span></td>
+                            <td><code>id_item_entrada</code></td>
+                            <td>integer</td>
+                            <td>Sim (PK)</td>
+                            <td>Identificador único do item da entrada.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_ENTRADA</span></td>
+                            <td><code>id_entrada</code></td>
+                            <td>integer</td>
+                            <td>Sim (FK)</td>
+                            <td>Entrada de estoque à qual o item pertence.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag fk">ID_PRODUTO</span></td>
+                            <td><code>id_produto</code></td>
+                            <td>integer</td>
+                            <td>Sim (FK)</td>
+                            <td>Produto recebido.</td>
+                        </tr>
+                        <tr>
+                            <td>QT_RECEBIDA</td>
+                            <td><code>quantidade</code></td>
+                            <td>integer</td>
+                            <td>Sim (&gt;0)</td>
+                            <td>Quantidade recebida daquele produto; soma-se a <code>QT_DISPONIVEL</code> em ESTOQUE
+                                ao ser processada.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="indices-note"><b>Índices:</b> PK <code>ID_ITEM_ENTRADA</code>; índices em
+                <code>ID_ENTRADA</code> e <code>ID_PRODUTO</code> (FKs).</div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2>5. Observação sobre dados pessoais</h2>
+            </div>
+            <div class="note">
+                <code>ID_CPF_CNPJ</code> em CLIENTE é dado pessoal opcional (LGPD, art. 5º, II). Por ser coletado
+                apenas quando o próprio cliente o fornece e não ser exigido para a realização do pedido, seu
+                tratamento deve se limitar às finalidades de identificação e emissão fiscal, sem uso para outras
+                finalidades sem base legal ou consentimento.
+            </div>
+        </section>
+
+        <footer>Dicionário de Dados — We Coffee · v1.0 · 17/setembro/2026</footer>
     </main>
+
+    <script>
+        function filterEntities(query) {
+            const q = query.trim().toLowerCase();
+            const panels = document.querySelectorAll('.entity-panel');
+            let visible = 0;
+            panels.forEach(function (panel) {
+                const haystack = panel.getAttribute('data-entity').toLowerCase();
+                const match = haystack.indexOf(q) !== -1;
+                panel.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+            const counter = document.getElementById('entityCount');
+            if (q) {
+                counter.textContent = visible + ' de ' + panels.length + ' entidades';
+            } else {
+                counter.textContent = panels.length + ' entidades';
+            }
+        }
+        filterEntities('');
+    </script>
 </body>
 
 </html>
