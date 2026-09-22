@@ -422,9 +422,7 @@ A Inteligência Artificial foi utilizada como ferramenta de apoio durante o dese
 | **Reflexão crítica** | De modo geral, a IA ajudou a organizar as ideias e a apontar inconsistências que a gente não tinha notado, mas todas as decisões finais passaram pela validação do grupo com base no que foi observado e coletado na visita e na entrevista — a IA sugeriu, mas quem decidiu foi o grupo mesmo. |
 
 ---
-
-# Conclusão
-
-O modelo conceitual desenvolvido representa os principais processos observados na unidade da We Coffee, incluindo atendimento, pedidos, pagamentos, preparação, entrega, estoque, entradas de produtos e fornecedores.
-
-A modelagem foi estruturada para manter consistência entre os processos levantados, os requisitos, as regras de negócio, o dicionário de dados e o DER.
+- **Participação (10%):** envolvimento nas discussões técnicas e nas decisões do grupo.
+- **Comprometimento (8%):** cumprimento de prazos e responsabilidades assumidas.
+- **Colaboração (4%):** respeito às contribuições dos colegas, cooperação na construção do projeto e colaboração equilibrada no histórico de commits do repositório GitHub.
+- **Autonomia (7%):** busca independente de soluções e proposta de melhorias.
