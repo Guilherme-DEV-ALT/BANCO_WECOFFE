@@ -46,7 +46,7 @@ Também foi observado que o controle de disponibilidade dos produtos depende da 
 
 Dessa forma, o projeto busca estruturar os dados de pedidos, pagamentos, produtos, estoque e entradas de estoque para facilitar consultas e futuras análises gerenciais.
 
-## justificativa da escolha
+## Justificativa da escolha
 
 A We Coffee foi escolhida por apresentar um cenário real de operação comercial com diferentes canais de atendimento, vendas, pagamentos, controle de estoque e relacionamento com fornecedores. Sendo também uma empresa nova com apenas 5 anos com obejtivos de finalizar o ano com 20 unidades no total e parecendo ser uma execelente oportunidade para aprendermos e crescermos junto com a empresa. 
 
@@ -82,7 +82,7 @@ Foram identificados os seguintes processos:
 - **Consulta e análise de vendas:** consolidação das informações para apoiar o fechamento mensal e a análise do desempenho da unidade.
 
 ## Fluxograma
-
+![alt text](</WECOFFE/modelagem/drawio.jpg>)
 
 ### Legenda
 
@@ -122,12 +122,12 @@ Foram identificados os seguintes processos:
 
 | Requisito |
 |---|
-| **Usabilidade:** as informações devem ser apresentadas de forma clara e organizada. |
-| **Integridade:** os relacionamentos entre pedidos, produtos, pagamentos e estoque devem permanecer consistentes. |
-| **Segurança:** informações administrativas e financeiras devem possuir controle de acesso adequado. |
-| **Desempenho:** consultas de pedidos, estoque e vendas devem apresentar resposta adequada à operação. |
-| **Disponibilidade:** as informações necessárias à operação devem estar disponíveis quando forem necessárias. |
-| **Escalabilidade:** o modelo deve permitir o crescimento da quantidade de produtos, pedidos, funcionários e fornecedores. |
+| **Usabilidade:** As informações devem ser apresentadas de forma clara e organizada. |
+| **Integridade:** Os relacionamentos entre pedidos, produtos, pagamentos e estoque devem permanecer consistentes. |
+| **Segurança:** Informações administrativas e financeiras devem possuir controle de acesso adequado. |
+| **Desempenho:** Consultas de pedidos, estoque e vendas devem apresentar resposta adequada à operação. |
+| **Disponibilidade:** As informações necessárias à operação devem estar disponíveis quando forem necessárias. |
+| **Escalabilidade:** O modelo deve permitir o crescimento da quantidade de produtos, pedidos, funcionários e fornecedores. |
 
 ---
 
@@ -295,12 +295,12 @@ Os atributos foram definidos a partir dos processos observados e estão detalhad
 
 Foram classificados principalmente como:
 
-- **PK:** identificadores únicos das entidades;
-- **FK:** atributos utilizados para relacionar entidades;
-- **Obrigatórios:** informações necessárias para o registro;
-- **Opcionais:** informações que podem não ser fornecidas;
-- **Condicionais:** atributos utilizados conforme o canal do pedido;
-- **Calculados:** informações derivadas de outros registros.
+- **PK:** Identificadores únicos das entidades;
+- **FK:** Atributos utilizados para relacionar entidades;
+- **Obrigatórios:** Informações necessárias para o registro;
+- **Opcionais:** Informações que podem não ser fornecidas;
+- **Condicionais:** Atributos utilizados conforme o canal do pedido;
+- **Calculados:** Informações derivadas de outros registros.
 
 ## 6.3 Relacionamentos pertinentes
 
@@ -334,7 +334,7 @@ Foram classificados principalmente como:
 
 ## 7.1 DER da We Coffee
 
-![DER — We Coffee] ![alt text](<../modelagem/derwecoffe.png>)
+![alt text](<./WECOFFE/Modelo_Conceitual_WeCoffee_BRModelo.png>)
 
 ## 7.2 Principais relacionamentos
 
