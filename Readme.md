@@ -82,7 +82,7 @@ Foram identificados os seguintes processos:
 - **Consulta e análise de vendas:** consolidação das informações para apoiar o fechamento mensal e a análise do desempenho da unidade.
 
 ## Fluxograma
-[alt text](/WECOFFE/modelagem/drawio.jpg)
+[alt text](</WECOFFE/modelagem/drawio.jpg>)
 
 ### Legenda
 
