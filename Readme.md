@@ -242,7 +242,7 @@ Foram identificados os seguintes processos:
 |---|---|---|
 | id_estoque | Identificador único do estoque | Obrigatório e único (PK) |
 | id_produto | Produto controlado pelo estoque | Obrigatório e único (FK) |
-| Quantidade | Quantidade atual disponível | Obrigatório; maior ou igual a zero |
+| quantidade | Quantidade atual disponível | Obrigatório; maior ou igual a zero |
 | data_atualizacao | Data da última atualização | Obrigatório |
 
 ## 5.9 Entidade: FORNECEDOR
