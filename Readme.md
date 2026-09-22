@@ -82,7 +82,7 @@ Foram identificados os seguintes processos:
 - **Consulta e análise de vendas:** consolidação das informações para apoiar o fechamento mensal e a análise do desempenho da unidade.
 
 ## Fluxograma
-
+[alt text](/WECOFFE/modelagem/drawio.jpg)
 
 ### Legenda
 
@@ -334,7 +334,7 @@ Foram classificados principalmente como:
 
 ## 7.1 DER da We Coffee
 
-![DER — We Coffee] ![alt text](<../Modelo_Conceitual_WeCoffee_BRModelo.png>)
+![DER — We Coffee] ![alt text](<./WECOFFE/Modelo_Conceitual_WeCoffee_BRModelo.png>)
 
 ## 7.2 Principais relacionamentos
 
