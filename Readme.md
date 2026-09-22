@@ -1,4 +1,4 @@
-# We Coffee — Modelo Conceitual de Banco de Dados
+# WeCoffee — Modelo Conceitual de Banco de Dados
 
 # Integrantes 
 
