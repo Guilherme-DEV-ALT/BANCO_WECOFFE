@@ -29,7 +29,7 @@ A organização escolhida é a **MOONLIGHT COFFEE CAFETERIA LTDA.**, que utiliza
 **Site:** https://wecoffee.com.br/  
 **Unidade analisada:** Avenida Paulista, 1111 — Bela Vista, São Paulo/SP.
 
-##  Contexto e porte
+## Contexto e porte
 
 A unidade analisada possui aproximadamente **6 funcionários** e trabalha com diferentes formas de atendimento:
 
