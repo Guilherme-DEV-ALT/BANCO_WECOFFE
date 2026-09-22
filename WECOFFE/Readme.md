@@ -82,7 +82,7 @@ Foram identificados os seguintes processos:
 - **Consulta e análise de vendas:** consolidação das informações para apoiar o fechamento mensal e a análise do desempenho da unidade.
 
 ## Fluxograma
-![alt text](image-1.png)
+
 
 ### Legenda
 
@@ -333,8 +333,7 @@ Foram classificados principalmente como:
 # 7. Diagrama Entidade-Relacionamento (DER)
 
 ## 7.1 DER da We Coffee
-
-![DER — We Coffee] ![alt text](<../modelagem/derwecoffe.png>)
+[text](../WeCoffee_BRModelo.pdf)
 
 ## 7.2 Principais relacionamentos
 
