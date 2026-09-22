@@ -16,7 +16,7 @@
 **Unidade:** Av. Paulista, 1111 — Bela Vista, São Paulo/SP  
 **Segmento:** Cafeteria, alimentos e bebidas
 
-> Este README apresenta o levantamento de requisitos, processos de negócio, regras, dicionário de dados, modelagem conceitual, DER e justificativas técnicas do projeto.
+> Este README apresenta o levantamento de requisitos, processos de negócio, regras, dicionário de dados, modelagem conceitual, DER e justificativas técnicas do projeto
 
 ---
 
