@@ -334,7 +334,7 @@ Foram classificados principalmente como:
 
 ## 7.1 DER da We Coffee
 
-![DER — We Coffee] ![alt text](<../modelagem/derwecoffe.png>)
+![DER — We Coffee] ![alt text](<WeCoffee_BRModelo.pdf>)
 
 ## 7.2 Principais relacionamentos
 
