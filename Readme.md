@@ -46,7 +46,7 @@ Também foi observado que o controle de disponibilidade dos produtos depende da 
 
 Dessa forma, o projeto busca estruturar os dados de pedidos, pagamentos, produtos, estoque e entradas de estoque para facilitar consultas e futuras análises gerenciais.
 
-## justificativa da escolha
+## Justificativa da escolha
 
 A We Coffee foi escolhida por apresentar um cenário real de operação comercial com diferentes canais de atendimento, vendas, pagamentos, controle de estoque e relacionamento com fornecedores. Sendo também uma empresa nova com apenas 5 anos com obejtivos de finalizar o ano com 20 unidades no total e parecendo ser uma execelente oportunidade para aprendermos e crescermos junto com a empresa. 
 
